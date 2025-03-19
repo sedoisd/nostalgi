@@ -40,7 +40,7 @@
                 </div>
             {% endfor %}
         </p>
-        <p>{{ form.remember_me() }} {{ form.is_finished.label }}</p>
+        <p>{{ form.is_finished() }} {{ form.is_finished.label }}</p>
         <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
         <div>{{ message }}</div>
     </form>
