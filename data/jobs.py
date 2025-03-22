@@ -17,4 +17,15 @@ class Jobs(SqlAlchemyBase):
     start_date = sqlalchemy.Column(sqlalchemy.DateTime, nullable=True)
     end_date = sqlalchemy.Column(sqlalchemy.DateTime, nullable=True)
     is_finished = sqlalchemy.Column(sqlalchemy.Boolean, nullable=True)
+
     user = orm.relationship('User')
+    hazard = orm.relationship("Hazard",
+                              secondary="job_to_hazard",
+                              backref="jobs")
+
+    def get_hazard_categories(self):
+        return ', '.join([str(i.id) for i in self.hazard])
+
+    # def vivod(self):
+    #     return (self.id, self.team_leader, self.job, self.work_size, self.collaborators,
+    #             self.start_date, self.end_date, self.is_finished, self.user, self.hazard)

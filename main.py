@@ -5,10 +5,11 @@ from flask_login import LoginManager, login_user, login_required, logout_user, c
 
 from data import db_session
 from data.departments import Department
-from data.users import User
-from data.jobs import Jobs
+from data.hazard import Hazard
 from forms.department import DepartmentForm
+from data.jobs import Jobs
 from forms.job import JobForm
+from data.users import User
 from forms.user import RegisterForm, LoginForm
 
 app = Flask(__name__)
@@ -33,8 +34,13 @@ def main():
     app.run(port=8080, host='127.0.0.1')
 
     # session = db_session.create_session()
-    # for user in session.query(User, Jobs).all():
-    #     print(user)
+    # job = session.query(Jobs).filter(Jobs.id == 4).first()
+    # hazard = session.query(Hazard).filter(Hazard.id == 5).first()
+    # job.hazard.append(hazard)
+    # print(job.vivod())
+    # # for user in session.query(User, Jobs).all():
+    # #     print(user)
+    # session.commit()
 
 
 @app.route("/")
