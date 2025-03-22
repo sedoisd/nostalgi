@@ -1,13 +1,15 @@
 import sqlalchemy
+from sqlalchemy_serializer import SerializerMixin
+
 from .db_session import SqlAlchemyBase
 
 
-
-class Hazard(SqlAlchemyBase):
+class Hazard(SqlAlchemyBase, SerializerMixin):
     __tablename__ = 'hazards'
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True,
                            autoincrement=True)
     name = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+
 
 association_table = sqlalchemy.Table(
     'job_to_hazard',
