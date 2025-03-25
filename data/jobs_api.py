@@ -36,15 +36,62 @@ def get_one_job(job_id):
 def create_job():
     if not request.json:
         return make_response(jsonify({'error': 'Empty request'}), 400)
-    elif not all(key in request.json for key in
-                 ['title', 'content', 'user_id', 'is_private']):
+    try:
+        team_leader = request.json['team_leader']
+        job = request.json['job']
+        work_size = request.json['work_size']
+        collaborators = request.json['collaborators']
+        is_finished = request.json['is_finished']
+        # print(request.json)
+        if not (isinstance(team_leader, int) and isinstance(work_size, int) and isinstance(is_finished, bool)):
+            raise Exception
+    except Exception:
         return make_response(jsonify({'error': 'Bad request'}), 400)
     db_sess = db_session.create_session()
-    news = News(
-        title=request.json['title'],
-        content=request.json['content'],
-        user_id=request.json['user_id'],
-        is_private=request.json['is_private']
+    news = Jobs(
+        team_leader=team_leader,
+        job=job,
+        work_size=work_size,
+        collaborators=collaborators,
+        is_finished=is_finished
+    )
+    db_sess.add(news)
+    db_sess.commit()
+    return jsonify({'id': news.id})
+
+
+@blueprint.route('/api/jobs/<int:job_id>', methods=['DELETE'])
+def delete_news(job_id):
+    db_sess = db_session.create_session()
+    job = db_sess.query(Jobs).get(job_id)
+    if not job:
+        return make_response(jsonify({'error': 'Not found'}), 404)
+    db_sess.delete(job)
+    db_sess.commit()
+    return jsonify({'success': 'OK'})
+
+@blueprint.route('/api/edit_jobs/<int:job_id>', methods=['POST'])
+def edit_job(job_id):
+    if not request.json:
+        return make_response(jsonify({'error': 'Empty request'}), 400)
+    try:
+        team_leader = request.json['team_leader']
+        job = request.json['job']
+        work_size = request.json['work_size']
+        collaborators = request.json['collaborators']
+        is_finished = request.json['is_finished']
+        # print(request.json)
+        if not (isinstance(team_leader, int) and isinstance(work_size, int) and isinstance(is_finished, bool)):
+            raise Exception
+    except Exception:
+        return make_response(jsonify({'error': 'Bad request'}), 400)
+    db_sess = db_session.create_session()
+    news = Jobs(
+        team_leader=team_leader,
+        job=job,
+        work_size=work_size,
+        collaborators=collaborators,
+        is_finished=is_finished
     )
     db_sess.add(news)
     db_sess.commit()

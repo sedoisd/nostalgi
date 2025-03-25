@@ -1,12 +1,21 @@
-from requests import get
+import pprint
+
+from requests import get, post, delete
+
+# def add_job(json=None):
+#     response_add_job = post(f'{server}jobs', json=json)
+#     try:
+#         return response_add_job, response_add_job.json()
+#     except Exception:
+#         return response_add_job
 
 server = 'http://localhost:8080/api/'
 response_all_jobs = get(f'{server}jobs')
-response_correct_one_job = get(f'{server}jobs/1')
-error_response_by_id_job = get(f'{server}jobs/99')
-error_response_by_str = get(f'{server}jobs/q')
 
-print(f'all jobs - {response_all_jobs}, {response_all_jobs.json()}')
-print(f'one job - {response_correct_one_job}, {response_correct_one_job.json()}')
-print(f'error request by id - {error_response_by_id_job}, {error_response_by_id_job.json()}')
-print(f'error request by str - {error_response_by_str}, {error_response_by_str.json()}')
+print(delete(f'{server}jobs/4').json())
+print(delete(f'{server}jobs/4').json())
+print(delete(f'{server}jobs/5').json())
+print(delete(f'{server}jobs/6').json())
+
+print(f'all jobs - {response_all_jobs}')
+pprint.pprint(response_all_jobs.json())
