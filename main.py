@@ -1,9 +1,11 @@
 import datetime
 
-from flask import Flask, render_template, redirect, request, abort, make_response, jsonify
+from flask import Flask, render_template, redirect, request, abort
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
+from flask_restful import abort, Api
 
-from data import db_session, jobs_api
+from data import db_session, users_resource  # , jobs_api
+
 from data.departments import Department
 from data.hazard import Hazard
 from forms.department import DepartmentForm
@@ -14,6 +16,11 @@ from forms.user import RegisterForm, LoginForm
 
 app = Flask(__name__)
 
+api = Api(app)
+api.add_resource(users_resources.UsersListResource, '/api/v2/users')
+
+api.add_resource(users_resources.UsersResource, '/api/v2/users/<int:user_id>')
+
 login_manager = LoginManager()
 login_manager.init_app(app)
 
@@ -23,14 +30,14 @@ app.config['PERMANENT_SESSION_LIFETIME'] = datetime.timedelta(
 )
 
 
-@app.errorhandler(404)
-def not_found(error):
-    return make_response(jsonify({'error': 'Not found'}), 404)
+# @app.errorhandler(404)
+# def not_found(error):
+#     return make_response(jsonify({'error': 'Not found'}), 404)
 
 
-@app.errorhandler(400)
-def bad_request(_):
-    return make_response(jsonify({'error': 'Bad Request'}), 400)
+# @app.errorhandler(400)
+# def bad_request(_):
+#     return make_response(jsonify({'error': 'Bad Request'}), 400)
 
 
 @login_manager.user_loader
@@ -41,7 +48,8 @@ def load_user(user_id):
 
 def main():
     db_session.global_init("db/2.db")
-    app.register_blueprint(jobs_api.blueprint)
+    # app.register_blueprint(jobs_api.blueprint)
+
     app.run(port=8080, host='127.0.0.1')
 
     # session = db_session.create_session()
