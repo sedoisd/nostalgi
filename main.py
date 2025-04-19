@@ -1,5 +1,7 @@
+import base64
 import datetime
-
+from io import BytesIO
+from PIL import Image
 from flask import Flask, render_template, redirect, request, abort
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from flask_restful import abort, Api
@@ -8,6 +10,7 @@ from data import db_session, users_resource  # , jobs_api
 
 from data.departments import Department
 from data.hazard import Hazard
+from data.static import get_map_by_toponym
 from forms.department import DepartmentForm
 from data.jobs import Jobs
 from forms.job import JobForm
@@ -17,9 +20,9 @@ from forms.user import RegisterForm, LoginForm
 app = Flask(__name__)
 
 api = Api(app)
-api.add_resource(users_resources.UsersListResource, '/api/v2/users')
+api.add_resource(users_resource.UsersListResource, '/api/v2/users')
 
-api.add_resource(users_resources.UsersResource, '/api/v2/users/<int:user_id>')
+api.add_resource(users_resource.UsersResource, '/api/v2/users/<int:user_id>')
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -272,6 +275,19 @@ def job_delete(id):
         abort(404)
     return redirect('/')
 
+@app.route('/users_show/<int:user_id>')
+def user_show(user_id):
+    db_sess = db_session.create_session()
+    user = db_sess.query(User).filter(User.id == user_id).first()
+    if user:
+        params = {'name': f'{user.surname} {user.name}', 'city': user.city_from}
+        image = Image.open(BytesIO(get_map_by_toponym(params['city']).content))
+        path = 'static/image/nostalgi.png'#.format(image.format)
+        image.save(path)
+        params['image'] = path
+        print(params)
 
+        return render_template('nostalgia.html', params=params)
+    return 'error'
 if __name__ == '__main__':
     main()

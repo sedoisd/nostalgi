@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div align="center">
+    <h2>Ностальгия</h2>
+    <h2>{{params.user_name}}</h2>
+    <h4>Hometown {{ params.city }}</h4>
+    <img src="{{ params.image }}"/>
+</div>
+{% endblock %}
