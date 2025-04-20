@@ -53,7 +53,7 @@ def main():
     db_session.global_init("db/2.db")
     # app.register_blueprint(jobs_api.blueprint)
 
-    app.run(port=8080, host='127.0.0.1')
+    app.run(port=8080, host='127.0.0.1', debug=True)
 
     # session = db_session.create_session()
     # job = session.query(Jobs).filter(Jobs.id == 4).first()
@@ -275,6 +275,7 @@ def job_delete(id):
         abort(404)
     return redirect('/')
 
+
 @app.route('/users_show/<int:user_id>')
 def user_show(user_id):
     db_sess = db_session.create_session()
@@ -282,12 +283,14 @@ def user_show(user_id):
     if user:
         params = {'name': f'{user.surname} {user.name}', 'city': user.city_from}
         image = Image.open(BytesIO(get_map_by_toponym(params['city']).content))
-        path = 'static/image/nostalgi.png'#.format(image.format)
+        path = 'static/image/k.png'  # .format(image.format)
         image.save(path)
         params['image'] = path
         print(params)
 
         return render_template('nostalgia.html', params=params)
-    return 'error'
+    return 'Произошла ошибка. Либо нет такого пользователя, либо город указан неверно.'
+
+
 if __name__ == '__main__':
     main()
